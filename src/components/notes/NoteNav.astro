@@ -28,7 +28,7 @@ const lang = getLangFromPath(Astro.url.pathname) ?? defaultLang
       next && (
         <a
           class="flex items-baseline justify-end gap-2 hover:text-accent"
-          href={getLocalizedPath(`/posts/${getNoteSlug(next.slug)}`, lang)}
+          href={getLocalizedPath(`/notes/${getNoteSlug(next.slug)}`, lang)}
         >
           <span>{next.data.title}</span>
           <i class="iconfont icon-arrow-right" />
