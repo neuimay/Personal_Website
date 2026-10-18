@@ -1,18 +1,19 @@
 ---
 import type { CollectionEntry } from 'astro:content'
 import { getShortDate } from '@/utils/date'
-import { getLangFromPath, getLocalizedPath, defaultLang } from '@/utils/i18n'
+import { getLangFromPath, getLocalizedPath, getTranslations, defaultLang } from '@/utils/i18n'
 
 interface Props {
-  posts: CollectionEntry<'posts'>[]
+  posts: (CollectionEntry<'posts'> | CollectionEntry<'notes'>)[]
+  showTypePrefix?: boolean
 }
 
-const { posts } = Astro.props
+const { posts, showTypePrefix = false } = Astro.props
 
 const groupedPosts = posts.reduce<
   {
     year: number
-    posts: CollectionEntry<'posts'>[]
+    posts: (CollectionEntry<'posts'> | CollectionEntry<'notes'>)[]
   }[]
 >((acc, cur) => {
   const year = cur.data.date.getFullYear()
@@ -30,6 +31,7 @@ const groupedPosts = posts.reduce<
 
 
 const lang = getLangFromPath(Astro.url.pathname) ?? defaultLang
+const t = getTranslations(lang)
 function normalizeSlug(slug: string) {
   return slug.replace(/^en\//, '')
 }
@@ -53,11 +55,18 @@ function normalizeSlug(slug: string) {
               </span>
               <a
                 class="hover:text-accent/80 hover:underline underline-offset-2"
-                href={getLocalizedPath(`/posts/${normalizeSlug(post.slug)}`, lang)}}
+                href={getLocalizedPath(
+                  `/${post.collection === 'notes' ? 'notes' : 'posts'}/${normalizeSlug(post.slug)}`,
+                  lang,
+                )}
               >
+                {showTypePrefix &&
+                  (post.collection === 'notes' ? t.pages.archiveNotePrefix : t.pages.archivePostPrefix)}
                 {post.data.title}
               </a>
-              {post.data.sticky > 0 && <i class="iconfont icon-pushpin text-red-500" />}
+              {post.collection === 'posts' && post.data.sticky > 0 && (
+                <i class="iconfont icon-pushpin text-red-500" />
+              )}
             </li>
           ))}
         </ul>
