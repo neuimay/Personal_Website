@@ -151,7 +151,7 @@
 //   return allNotes.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 // }
 
-import { getCollection } from 'astro:content'
+import { getCollection, type CollectionEntry } from 'astro:content'
 import type { Lang } from '@/utils/i18n'
 
 type TagItem = { slug: string; name: string; count: number }
@@ -203,21 +203,14 @@ export async function getSortedPosts(lang: Lang) {
   })
 }
 
-// 获取所有文章的字数
+// 获取 Posts + Notes 的总字数
 export async function getAllPostsWordCount(lang: Lang) {
-  const allPosts = await getAllPosts(lang)
+  const [allPosts, allNotes] = await Promise.all([getAllPosts(lang), getAllNotes(lang)])
+  const res = await Promise.all([...allPosts, ...allNotes].map((entry) => entry.render()))
 
-  const promises = allPosts.map((post) => {
-    return post.render()
-  })
-
-  const res = await Promise.all(promises)
-
-  const wordCount = res.reduce((count, cur) => {
+  return res.reduce((count, cur) => {
     return count + cur.remarkPluginFrontmatter.words
   }, 0)
-
-  return wordCount
 }
 
 // 转换为 URL 安全的 slug，删除点，空格转为短横线，大写转为小写
@@ -309,4 +302,11 @@ async function getAllNotes(lang: Lang) {
 export async function getSortedNotes(lang: Lang) {
   const allNotes = await getAllNotes(lang)
   return allNotes.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+}
+
+export type ArchiveEntry = CollectionEntry<'posts'> | CollectionEntry<'notes'>
+
+export async function getOldestArchiveEntries(lang: Lang): Promise<ArchiveEntry[]> {
+  const [posts, notes] = await Promise.all([getAllPosts(lang), getAllNotes(lang)])
+  return [...posts, ...notes].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 }

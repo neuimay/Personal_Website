@@ -48,7 +48,9 @@
     "hotTags": "Hot Tags",
     "moreTags": "More Tags",
     "archives": "Archives",
-    "archivesDescription": "A total of {count} articles published. Keep up the good work."
+    "archivesDescription": "A total of {count} articles published. Keep up the good work.",
+    "archivePostPrefix": "Post: ",
+    "archiveNotePrefix": "Note: "
   },
   "categories": {
     "title": "Category",

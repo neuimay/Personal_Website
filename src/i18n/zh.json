@@ -46,7 +46,9 @@
     "hotTags": "热门标签",
     "moreTags": "更多标签",
     "archives": "归档",
-    "archivesDescription": "共产出 {count} 篇文章，再接再厉。"
+    "archivesDescription": "共产出 {count} 篇文章，再接再厉。",
+    "archivePostPrefix": "文章: ",
+    "archiveNotePrefix": "手记: "
   },
   "categories": {
     "title": "分类",
